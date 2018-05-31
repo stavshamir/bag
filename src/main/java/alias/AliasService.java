@@ -4,5 +4,9 @@ import java.io.IOException;
 import java.util.Set;
 
 public interface AliasService {
-    Set<Alias> getSystemAliases() throws IOException;
+
+    Set<Alias> getAllAliases() throws IOException;
+
+    void addAlias(Alias alias);
+
 }

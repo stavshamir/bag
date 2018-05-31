@@ -11,19 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasServiceImplTest {
 
-    private AliasService aliasService = new AliasServiceImpl();
+    private AliasService aliasService = new AliasServiceImpl(new AliasUserFileRepository(), new AliasSystemRepositoryImpl());
 
     @Test
-    public void getSystemAliases() {
-        try {
-            Set<Alias> aliases = aliasService.getSystemAliases();
-
-            assertThat(aliases)
-                    .contains(new Alias("ls", "ls --color=auto"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-        }
+    public void getAllAliases() {
+        fail();
     }
 
+    @Test
+    public void addAlias() {
+        fail();
+    }
 }

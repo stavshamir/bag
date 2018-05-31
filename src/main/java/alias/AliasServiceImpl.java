@@ -11,16 +11,22 @@ import static java.util.stream.Collectors.toSet;
 
 public class AliasServiceImpl implements AliasService {
 
+    private final AliasUserRepository aliasUserRepository;
+    private final AliasSystemRepository aliasSystemRepository;
+
+    public AliasServiceImpl(AliasUserRepository aliasUserRepository, AliasSystemRepository aliasSystemRepository) {
+        this.aliasUserRepository = aliasUserRepository;
+        this.aliasSystemRepository = aliasSystemRepository;
+    }
+
     @Override
-    public Set<Alias> getSystemAliases() throws IOException {
+    public Set<Alias> getAllAliases() throws IOException {
+        return aliasSystemRepository.getAliases();
+    }
 
-        Process process = new ProcessBuilder("bash", "-i", "src/main/resources/alias.sh").start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    @Override
+    public void addAlias(Alias alias) {
 
-        return reader.lines()
-                .map(line -> StringUtils.removeStart(line, "alias "))
-                .map(Alias::fromReusableForm)
-                .collect(toSet());
     }
 
 }
