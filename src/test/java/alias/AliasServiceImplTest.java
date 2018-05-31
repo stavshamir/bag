@@ -1,24 +1,46 @@
 package alias;
 
+import com.google.common.collect.ImmutableSet;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.fail;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
 public class AliasServiceImplTest {
 
     private static AliasService aliasService;
+    private final static String userAliasFilePath = "src/test/resources/test_alias_file";
+
+    private static final Set<Alias> originalTestFileAliases = ImmutableSet.of(
+            new Alias("test", "echo test", "a test alias"),
+            new Alias("nodesc", "echo no description"),
+            new Alias("double", "echo double quotes")
+    );
 
     @BeforeClass
     public static void setUp() {
-        AliasUserFileRepository aliasUserRepository = new AliasUserFileRepository("src/test/resources/test_alias_file");
+        AliasUserFileRepository aliasUserRepository = new AliasUserFileRepository(userAliasFilePath);
         AliasSystemRepositoryImpl aliasSystemRepository = new AliasSystemRepositoryImpl();
         aliasService = new AliasServiceImpl(aliasUserRepository, aliasSystemRepository);
+    }
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        try (Writer writer = new BufferedWriter(new FileWriter(userAliasFilePath))) {
+            for (Alias a : originalTestFileAliases) {
+                writer.append("alias ")
+                        .append(a.toString())
+                        .append(System.lineSeparator());
+            }
+        }
     }
 
     @Test
@@ -47,7 +69,30 @@ public class AliasServiceImplTest {
     }
 
     @Test
-    public void addAlias() {
-        fail();
+    public void addAlias_existing_alias() {
+        Alias existingInUserRepository = new Alias("test", "the value is not supposed to matter");
+        Alias existingInSystemRepository = new Alias("ls", "the value is not supposed to matter");
+
+        assertThatExceptionOfType(AliasAlreadyExists.class)
+                .isThrownBy(() -> aliasService.addAlias(existingInUserRepository));
+
+        assertThatExceptionOfType(AliasAlreadyExists.class)
+                .isThrownBy(() -> aliasService.addAlias(existingInSystemRepository));
     }
+
+    @Test
+    public void addAlias_new_alias() throws IOException {
+        Alias newAlias = new Alias("new", "echo test");
+
+        aliasService.addAlias(newAlias);
+        try (BufferedReader reader = new BufferedReader(new FileReader(userAliasFilePath))) {
+            Set<String> lines = reader
+                    .lines()
+                    .collect(toSet());
+
+            assertThat(lines)
+                    .contains("alias " + newAlias.toString());
+        }
+    }
+
 }

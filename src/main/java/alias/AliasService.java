@@ -9,5 +9,5 @@ public interface AliasService {
 
     boolean aliasNameExists(Alias fromUserRepository) throws IOException;
 
-    void addAlias(Alias alias);
+    void addAlias(Alias alias) throws IOException;
 }

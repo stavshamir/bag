@@ -1,27 +1,56 @@
 package alias;
 
+import com.google.common.collect.ImmutableSet;
+import org.junit.AfterClass;
 import org.junit.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasUserFileRepositoryTest {
 
-    private AliasUserRepository aliasUserRepository = new AliasUserFileRepository("src/test/resources/test_alias_file");
+    private static String userAliasFilePath = "src/test/resources/test_alias_file";
+    private AliasUserRepository aliasUserRepository = new AliasUserFileRepository(userAliasFilePath);
+
+    private static final Set<Alias> originalTestFileAliases = ImmutableSet.of(
+            new Alias("test", "echo test", "a test alias"),
+            new Alias("nodesc", "echo no description"),
+            new Alias("double", "echo double quotes")
+    );
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        try (Writer writer = new BufferedWriter(new FileWriter(userAliasFilePath))) {
+            for (Alias a : originalTestFileAliases) {
+                writer.append("alias ")
+                        .append(a.toString())
+                        .append(System.lineSeparator());
+            }
+        }
+    }
 
     @Test
     public void getAliases() throws IOException {
         Set<Alias> aliases = aliasUserRepository.getAliases();
 
-        assertThat(aliases)
-                .contains(new Alias("test", "echo test"))
-                .contains(new Alias("nodesc", "echo no description"))
-                .contains(new Alias("double", "echo double quotes"));
+        originalTestFileAliases.forEach(assertThat(aliases)::contains);
     }
 
     @Test
-    public void addAlias() {
+    public void addAlias() throws IOException {
+        Alias newAlias = new Alias("new", "echo test", "another test alias");
+        aliasUserRepository.addAlias(newAlias);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(userAliasFilePath))) {
+            Set<String> lines = reader
+                    .lines()
+                    .collect(toSet());
+
+            assertThat(lines)
+                    .contains("alias " + newAlias.toString());
+        }
     }
 }

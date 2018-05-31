@@ -17,16 +17,20 @@ public class AliasUserFileRepository implements AliasUserRepository {
 
     @Override
     public Set<Alias> getAliases() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(userAliasFile));
-
-        return reader.lines()
-                .map(line -> StringUtils.removeStart(line, "alias "))
-                .map(Alias::fromReusableForm)
-                .collect(toSet());
+        try (BufferedReader reader = new BufferedReader(new FileReader(userAliasFile))) {
+            return reader.lines()
+                    .map(line -> StringUtils.removeStart(line, "alias "))
+                    .map(Alias::fromReusableForm)
+                    .collect(toSet());
+        }
     }
 
     @Override
-    public void addAlias(Alias alias) {
-
+    public void addAlias(Alias alias) throws IOException {
+        try (Writer writer = new BufferedWriter(new FileWriter(userAliasFile, true))) {
+           writer.append("alias ")
+                   .append(alias.toString())
+                   .append(System.lineSeparator());
+        }
     }
 }
