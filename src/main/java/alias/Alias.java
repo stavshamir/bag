@@ -17,6 +17,10 @@ public class Alias {
         this(name, value, null);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static Alias fromReusableForm(String reusableForm) {
         String[] split = reusableForm.split("=['\"]");
         if (split.length != 2) {

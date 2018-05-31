@@ -7,6 +7,7 @@ public interface AliasService {
 
     Set<Alias> getAllAliases() throws IOException;
 
-    void addAlias(Alias alias);
+    boolean aliasNameExists(Alias fromUserRepository) throws IOException;
 
+    void addAlias(Alias alias);
 }

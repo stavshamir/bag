@@ -31,6 +31,22 @@ public class AliasServiceImplTest {
     }
 
     @Test
+    public void aliasNameExists() throws IOException {
+        Alias fromUserRepository = new Alias("test", "the value is not supposed to matter");
+        Alias fromSystemRepository = new Alias("ls", "the value is not supposed to matter");
+        Alias notAnAlias = new Alias("not_an_alias", "the value is not supposed to matter");
+
+        assertThat(aliasService.aliasNameExists(fromUserRepository))
+                .isTrue();
+
+        assertThat(aliasService.aliasNameExists(fromSystemRepository))
+                .isTrue();
+
+        assertThat(aliasService.aliasNameExists(notAnAlias))
+                .isFalse();
+    }
+
+    @Test
     public void addAlias() {
         fail();
     }
