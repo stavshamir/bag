@@ -20,8 +20,7 @@ public class AliasServiceImplTest {
     private final static String userAliasFilePath = "src/test/resources/test_alias_file";
 
     private static final Set<Alias> originalTestFileAliases = ImmutableSet.of(
-            new Alias("test", "echo test", "a test alias"),
-            new Alias("nodesc", "echo no description"),
+            new Alias("test", "echo test"),
             new Alias("double", "echo double quotes")
     );
 

@@ -16,8 +16,7 @@ public class AliasUserFileRepositoryTest {
     private AliasUserRepository aliasUserRepository = new AliasUserFileRepository(userAliasFilePath);
 
     private static final Set<Alias> originalTestFileAliases = ImmutableSet.of(
-            new Alias("test", "echo test", "a test alias"),
-            new Alias("nodesc", "echo no description"),
+            new Alias("test", "echo test"),
             new Alias("double", "echo double quotes")
     );
 
@@ -41,7 +40,7 @@ public class AliasUserFileRepositoryTest {
 
     @Test
     public void addAlias() throws IOException {
-        Alias newAlias = new Alias("new", "echo test", "another test alias");
+        Alias newAlias = new Alias("new", "echo test");
         aliasUserRepository.addAlias(newAlias);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(userAliasFilePath))) {

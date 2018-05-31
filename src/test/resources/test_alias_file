@@ -1,3 +1,2 @@
-alias test='echo test' # a test alias
-alias nodesc='echo no description'
+alias test='echo test'
 alias double='echo double quotes'

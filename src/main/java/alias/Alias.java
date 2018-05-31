@@ -5,16 +5,10 @@ import java.util.Objects;
 public class Alias {
     private String name;
     private String value;
-    private String description;
-
-    public Alias(String name, String value, String description) {
-        this.name = name;
-        this.value = value;
-        this.description = description;
-    }
 
     public Alias(String name, String value) {
-        this(name, value, null);
+        this.name = name;
+        this.value = value;
     }
 
     public String getName() {
@@ -27,24 +21,10 @@ public class Alias {
             throw new AliasReusableFormException(reusableForm + " is not a valid alias reusable form");
         }
 
-        return new Alias(split[0], getValueFromReusableForm(split[1]), getDescriptionFromReusableForm(split[1]));
-    }
+        String name = split[0];
+        String value = split[1].substring(0, split[1].length() - 1);
 
-    private static String getValueFromReusableForm(String valueAndOptionalDescription) {
-        String value = valueAndOptionalDescription
-                .split("#")[0]
-                .trim();
-        return value.substring(0, value.length() - 1);
-    }
-
-    private static String getDescriptionFromReusableForm(String valueAndOptionalDescription) {
-        String[] arr = valueAndOptionalDescription.split("#");
-
-        if (arr.length == 2) {
-            return arr[1].trim();
-        }
-
-        return null;
+        return new Alias(name, value);
     }
 
     @Override
@@ -63,18 +43,7 @@ public class Alias {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(name)
-                .append("=")
-                .append("'")
-                .append(value)
-                .append("'");
-
-        if (description != null && !description.isEmpty()) {
-            builder.append(" # ")
-                    .append(description);
-        }
-        return builder.toString();
+        return name + "=" + "'" + value + "'";
     }
 
 }
