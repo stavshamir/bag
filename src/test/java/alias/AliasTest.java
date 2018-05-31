@@ -8,11 +8,30 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class AliasTest {
 
     @Test
-    public void fromReusableForm() {
+    public void fromReusableForm_no_description() {
         String reusableForm = "grep='grep --color=auto'";
 
         assertThat(Alias.fromReusableForm(reusableForm))
                 .isEqualTo(new Alias("grep", "grep --color=auto"));
+    }
+
+    @Test
+    public void fromReusableForm_double_quotes() {
+        String reusableForm = "grep=\"grep --color=auto\"";
+
+        assertThat(Alias.fromReusableForm(reusableForm))
+                .isEqualTo(new Alias("grep", "grep --color=auto"));
+    }
+
+    @Test
+    public void fromReusableForm_with_description() {
+        String reusableFormWithDescription = "grep='grep --color=auto' # grep with colors";
+        assertThat(Alias.fromReusableForm(reusableFormWithDescription))
+                .isEqualTo(new Alias("grep", "grep --color=auto", "grep with colors"));
+
+        String reusableFormWithDescriptionMultipleWhitespaces = "grep='grep --color=auto'   #  grep with colors";
+        assertThat(Alias.fromReusableForm(reusableFormWithDescriptionMultipleWhitespaces))
+                .isEqualTo(new Alias("grep", "grep --color=auto", "grep with colors"));
     }
 
     @Test

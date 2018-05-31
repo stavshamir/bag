@@ -19,15 +19,29 @@ public class Alias {
     }
 
     public static Alias fromReusableForm(String reusableForm) {
-        String[] nameAndValue = reusableForm.split("='");
-        if (nameAndValue.length != 2) {
-            throw new AliasReusableFormException("Error: " + reusableForm + " is not a valid alias reusable form");
+        String[] split = reusableForm.split("=['\"]");
+        if (split.length != 2) {
+            throw new AliasReusableFormException(reusableForm + " is not a valid alias reusable form");
         }
 
-        String name = nameAndValue[0];
-        String value = StringUtils.removeEnd(nameAndValue[1], "'");
+        return new Alias(split[0], getValueFromReusableForm(split[1]), getDescriptionFromReusableForm(split[1]));
+    }
 
-        return new Alias(name, value);
+    private static String getValueFromReusableForm(String valueAndOptionalDescription) {
+        String value = valueAndOptionalDescription
+                .split("#")[0]
+                .trim();
+        return value.substring(0, value.length() - 1);
+    }
+
+    private static String getDescriptionFromReusableForm(String valueAndOptionalDescription) {
+        String[] arr = valueAndOptionalDescription.split("#");
+
+        if (arr.length == 2) {
+            return arr[1].trim();
+        }
+
+        return null;
     }
 
     @Override
