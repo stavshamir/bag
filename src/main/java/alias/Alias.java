@@ -1,11 +1,34 @@
 package alias;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 public class Alias {
     private String name;
     private String value;
     private String description;
+
+    public Alias(String name, String value, String description) {
+        this.name = name;
+        this.value = value;
+        this.description = description;
+    }
+
+    public Alias(String name, String value) {
+        this(name, value, null);
+    }
+
+    public static Alias fromReusableForm(String reusableForm) {
+        String[] nameAndValue = reusableForm.split("='");
+        if (nameAndValue.length != 2) {
+            throw new AliasReusableFormException("Error: " + reusableForm + "is not a valid alias reusable form");
+        }
+
+        String name = nameAndValue[0];
+        String value = StringUtils.removeEnd(nameAndValue[1], "'");
+
+        return new Alias(name, value);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -19,16 +42,6 @@ public class Alias {
     @Override
     public int hashCode() {
         return Objects.hash(name, value);
-    }
-
-    public Alias(String name, String value, String description) {
-        this.name = name;
-        this.value = value;
-        this.description = description;
-    }
-
-    public Alias(String name, String value) {
-        this(name, value, null);
     }
 
     @Override
@@ -46,4 +59,5 @@ public class Alias {
         }
         return builder.toString();
     }
+
 }
