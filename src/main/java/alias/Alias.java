@@ -21,7 +21,7 @@ public class Alias {
     public static Alias fromReusableForm(String reusableForm) {
         String[] nameAndValue = reusableForm.split("='");
         if (nameAndValue.length != 2) {
-            throw new AliasReusableFormException("Error: " + reusableForm + "is not a valid alias reusable form");
+            throw new AliasReusableFormException("Error: " + reusableForm + " is not a valid alias reusable form");
         }
 
         String name = nameAndValue[0];
