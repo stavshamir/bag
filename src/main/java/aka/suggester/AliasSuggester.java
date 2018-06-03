@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,8 +32,7 @@ public class AliasSuggester {
         this.bashHistoryRepository = bashHistoryRepository;
     }
 
-
-    public Set<Alias> suggestAliases() throws IOException {
+    public Set<AliasSuggestion> suggestAliases() throws IOException {
         Set<String> aliasValues = aliasService.getAllAliases().stream()
                 .map(Alias::getValue)
                 .collect(toSet());
@@ -47,8 +48,8 @@ public class AliasSuggester {
                 .filter(commandIsLongEnough)
                 .filter(commandIsUsedFrequently)
                 .filter(commandIsNotAliased)
-                .map(cmd -> new Alias("foo", cmd))
-                .collect(toSet());
+                .map(cmd -> new AliasSuggestion(new Alias("foo", cmd), commandOccurrences.get(cmd)))
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
 }
