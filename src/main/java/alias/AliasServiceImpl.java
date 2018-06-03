@@ -33,7 +33,7 @@ public class AliasServiceImpl implements AliasService {
     @Override
     public void addAlias(Alias alias) throws IOException {
         if (aliasNameExists(alias)) {
-            throw new AliasAlreadyExists(alias.toString() + " already exists");
+            throw new AliasAlreadyExists("alias " + alias.getName() + " already exists");
         }
 
         aliasUserRepository.addAlias(alias);

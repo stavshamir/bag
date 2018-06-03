@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasUserFileRepositoryTest {
 
-    private static String userAliasFilePath = "src/test/resources/test_alias_file";
+    private static final String userAliasFilePath = "src/test/resources/test_alias_file";
     private AliasUserRepository aliasUserRepository = new AliasUserFileRepository(userAliasFilePath);
 
     private static final Set<Alias> originalTestFileAliases = ImmutableSet.of(
