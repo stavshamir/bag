@@ -1,15 +1,20 @@
 package alias;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+@Service
 public class AliasServiceImpl implements AliasService {
 
     private final AliasUserRepository aliasUserRepository;
     private final AliasSystemRepository aliasSystemRepository;
 
+    @Autowired
     public AliasServiceImpl(AliasUserRepository aliasUserRepository, AliasSystemRepository aliasSystemRepository) {
         this.aliasUserRepository = aliasUserRepository;
         this.aliasSystemRepository = aliasSystemRepository;

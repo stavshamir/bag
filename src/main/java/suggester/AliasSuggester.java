@@ -3,6 +3,8 @@ package suggester;
 import alias.Alias;
 import alias.AliasService;
 import history.BashHistoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
+@Component
 public class AliasSuggester {
 
     private final AliasService aliasService;
@@ -21,10 +24,12 @@ public class AliasSuggester {
     private static final int MIN_OCCURRENCES_TO_ALIAS = 3;
     private static final int MIN_LENGTH_TO_ALIAS = 5;
 
+    @Autowired
     public AliasSuggester(AliasService aliasService, BashHistoryRepository bashHistoryRepository) {
         this.aliasService = aliasService;
         this.bashHistoryRepository = bashHistoryRepository;
     }
+
 
     public Set<Alias> suggestAliases() throws IOException {
         Set<String> aliasValues = aliasService.getAllAliases().stream()

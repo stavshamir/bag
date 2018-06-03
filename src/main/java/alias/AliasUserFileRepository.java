@@ -1,10 +1,13 @@
 package alias;
 
+import org.springframework.stereotype.Repository;
+
 import java.io.*;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+@Repository
 public class AliasUserFileRepository implements AliasUserRepository {
 
     private final File userAliasFile;
