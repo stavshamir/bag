@@ -1,4 +1,4 @@
-package alias;
+package aka.alias;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.AfterClass;

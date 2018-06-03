@@ -1,8 +1,8 @@
-package suggester;
+package aka.suggester;
 
-import alias.Alias;
-import alias.AliasService;
-import history.BashHistoryRepository;
+import aka.alias.Alias;
+import aka.alias.AliasService;
+import aka.history.BashHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

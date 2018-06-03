@@ -1,4 +1,4 @@
-package alias;
+package aka.alias;
 
 public class AliasReusableFormException extends RuntimeException {
 

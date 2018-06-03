@@ -1,4 +1,4 @@
-package alias;
+package aka.alias;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,4 +1,4 @@
-package history;
+package aka.history;
 
 import org.junit.Test;
 

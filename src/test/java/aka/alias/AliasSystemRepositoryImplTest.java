@@ -1,4 +1,4 @@
-package alias;
+package aka.alias;
 
 import org.junit.Test;
 

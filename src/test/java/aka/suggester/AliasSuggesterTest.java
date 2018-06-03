@@ -1,11 +1,9 @@
-package suggester;
+package aka.suggester;
 
-import alias.*;
+import aka.alias.*;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import history.BashHistoryRepository;
-import org.assertj.core.util.Lists;
+import aka.history.BashHistoryRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,9 +12,7 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
