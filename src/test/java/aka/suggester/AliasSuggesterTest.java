@@ -13,6 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,7 +63,11 @@ public class AliasSuggesterTest {
         Mockito.when(aliasSystemRepository.getAliases())
                 .thenReturn(Sets.newHashSet(new Alias(defaultAliasName, aliasedFromSystem)));
 
-        assertThat(aliasSuggester.suggestAliases())
+        final Set<Alias> suggestions = aliasSuggester.suggestAliases().stream()
+                .map(AliasSuggestion::getAlias)
+                .collect(Collectors.toSet());
+
+        assertThat(suggestions)
                 .contains(new Alias(defaultAliasName, unAliased))
                 .doesNotContain(new Alias(defaultAliasName, unAliasedNonFrequent))
                 .doesNotContain(new Alias(defaultAliasName, aliasedFromUserFile))
