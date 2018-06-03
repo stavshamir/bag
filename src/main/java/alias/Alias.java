@@ -1,5 +1,7 @@
 package alias;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
 
 public class Alias {
@@ -15,15 +17,18 @@ public class Alias {
         return name;
     }
 
-    public static Alias fromReusableForm(String reusableForm) {
+    public static Alias fromString(String reusableForm) {
+        if (!StringUtils.startsWith(reusableForm, "alias ")) {
+            throw new AliasReusableFormException(reusableForm + " is not a valid alias reusable form - must start with the \"alias \"");
+        }
+
         String[] split = reusableForm.split("=['\"]");
         if (split.length != 2) {
             throw new AliasReusableFormException(reusableForm + " is not a valid alias reusable form");
         }
 
-        String name = split[0];
+        String name = StringUtils.removeStart(split[0], "alias ");
         String value = split[1].substring(0, split[1].length() - 1);
-
         return new Alias(name, value);
     }
 
@@ -43,7 +48,7 @@ public class Alias {
 
     @Override
     public String toString() {
-        return name + "=" + "'" + value + "'";
+        return "alias " + name + "=" + "'" + value + "'";
     }
 
 }

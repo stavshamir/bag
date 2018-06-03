@@ -1,7 +1,5 @@
 package alias;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +14,7 @@ public class AliasSystemRepositoryImpl implements AliasSystemRepository {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
         return reader.lines()
-                .map(line -> StringUtils.removeStart(line, "alias "))
-                .map(Alias::fromReusableForm)
+                .map(Alias::fromString)
                 .collect(toSet());
     }
 }

@@ -1,7 +1,5 @@
 package alias;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.*;
 import java.util.Set;
 
@@ -19,8 +17,7 @@ public class AliasUserFileRepository implements AliasUserRepository {
     public Set<Alias> getAliases() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(userAliasFile))) {
             return reader.lines()
-                    .map(line -> StringUtils.removeStart(line, "alias "))
-                    .map(Alias::fromReusableForm)
+                    .map(Alias::fromString)
                     .collect(toSet());
         }
     }
@@ -28,8 +25,7 @@ public class AliasUserFileRepository implements AliasUserRepository {
     @Override
     public void addAlias(Alias alias) throws IOException {
         try (Writer writer = new BufferedWriter(new FileWriter(userAliasFile, true))) {
-           writer.append("alias ")
-                   .append(alias.toString())
+           writer.append(alias.toString())
                    .append(System.lineSeparator());
         }
     }

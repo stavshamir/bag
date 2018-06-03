@@ -8,27 +8,30 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class AliasTest {
 
     @Test
-    public void fromReusableForm() {
-        String reusableForm = "grep='grep --color=auto'";
+    public void fromString() {
+        String alias = "alias grep='grep --color=auto'";
 
-        assertThat(Alias.fromReusableForm(reusableForm))
+        assertThat(Alias.fromString(alias))
                 .isEqualTo(new Alias("grep", "grep --color=auto"));
     }
 
     @Test
-    public void fromReusableForm_double_quotes() {
-        String reusableForm = "grep=\"grep --color=auto\"";
+    public void fromString_double_quotes() {
+        String alias = "alias grep=\"grep --color=auto\"";
 
-        assertThat(Alias.fromReusableForm(reusableForm))
+        assertThat(Alias.fromString(alias))
                 .isEqualTo(new Alias("grep", "grep --color=auto"));
     }
 
     @Test
-    public void fromReusableForm_invalid_format() {
-        String reusableForm = "grep'grep --color=auto'";
-
+    public void fromString_invalid_format() {
+        String invalidAlias_missing_assign = "alias grep'grep --color=auto'";
         assertThatExceptionOfType(AliasReusableFormException.class)
-                .isThrownBy(() -> Alias.fromReusableForm(reusableForm));
+                .isThrownBy(() -> Alias.fromString(invalidAlias_missing_assign));
+
+        String invalidAlias_missing_alias_prefix = "grep='grep --color=auto'";
+        assertThatExceptionOfType(AliasReusableFormException.class)
+                .isThrownBy(() -> Alias.fromString(invalidAlias_missing_alias_prefix));
     }
 
     @Test
@@ -36,7 +39,7 @@ public class AliasTest {
         Alias alias = new Alias("grep", "grep --color=auto");
 
         assertThat(alias.toString())
-                .isEqualTo("grep='grep --color=auto'");
+                .isEqualTo("alias grep='grep --color=auto'");
     }
 
 }

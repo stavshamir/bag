@@ -35,8 +35,7 @@ public class AliasServiceImplTest {
     public static void tearDown() throws IOException {
         try (Writer writer = new BufferedWriter(new FileWriter(userAliasFilePath))) {
             for (Alias a : originalTestFileAliases) {
-                writer.append("alias ")
-                        .append(a.toString())
+                writer.append(a.toString())
                         .append(System.lineSeparator());
             }
         }
@@ -90,7 +89,7 @@ public class AliasServiceImplTest {
                     .collect(toSet());
 
             assertThat(lines)
-                    .contains("alias " + newAlias.toString());
+                    .contains(newAlias.toString());
         }
     }
 
