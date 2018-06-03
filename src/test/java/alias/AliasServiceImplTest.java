@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.io.*;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,6 +64,23 @@ public class AliasServiceImplTest {
         assertThat(aliasService.aliasNameExists(notAnAlias))
                 .isFalse();
     }
+
+    @Test
+    public void aliasValueExists() throws IOException {
+        Alias fromUserRepository = new Alias("foo", "echo test");
+        Alias fromSystemRepository = new Alias("foo", "ls --color=auto");
+        Alias notAnAlias = new Alias("foo", "the value is not supposed to matter");
+
+        assertThat(aliasService.aliasValueExists(fromUserRepository))
+                .isTrue();
+
+        assertThat(aliasService.aliasValueExists(fromSystemRepository))
+                .isTrue();
+
+        assertThat(aliasService.aliasValueExists(notAnAlias))
+                .isFalse();
+    }
+
 
     @Test
     public void addAlias_existing_alias() {

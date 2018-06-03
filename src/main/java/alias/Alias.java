@@ -17,6 +17,10 @@ public class Alias {
         return name;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     public static Alias fromString(String reusableForm) {
         if (!StringUtils.startsWith(reusableForm, "alias ")) {
             throw new AliasReusableFormException(reusableForm + " is not a valid alias reusable form - must start with the \"alias \"");

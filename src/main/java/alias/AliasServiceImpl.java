@@ -31,6 +31,14 @@ public class AliasServiceImpl implements AliasService {
     }
 
     @Override
+    public boolean aliasValueExists(Alias alias) throws IOException {
+        return getAllAliases().stream()
+                .map(Alias::getValue)
+                .collect(toSet())
+                .contains(alias.getValue());
+    }
+
+    @Override
     public void addAlias(Alias alias) throws IOException {
         if (aliasNameExists(alias)) {
             throw new AliasAlreadyExists("alias " + alias.getName() + " already exists");
