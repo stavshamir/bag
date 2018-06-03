@@ -28,6 +28,7 @@ public class Application implements CommandLineRunner{
 
         suggestions.stream()
                 .map(AliasSuggestion::toString)
+                .limit(3)
                 .forEach(System.out::println);
     }
 }
