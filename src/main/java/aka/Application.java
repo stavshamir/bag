@@ -22,9 +22,10 @@ public class Application implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws IOException {
+        String template = "%-90s %-15s %s\n";
+        System.out.printf(template, "COMMAND", "TIMES USED", "SUGGESTED ALIAS");
         aliasSuggester.suggestAliases().stream()
                 .limit(5)
-                .map(AliasSuggestion::toString)
-                .forEach(System.out::println);
+                .forEach(s -> System.out.printf(template, s.getAlias().getValue(), s.getOccurrences(), s.getAlias().toString()));
     }
 }
