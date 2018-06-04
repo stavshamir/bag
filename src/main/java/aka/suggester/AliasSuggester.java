@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,24 +32,32 @@ public class AliasSuggester {
     }
 
     public Set<AliasSuggestion> suggestAliases() throws IOException {
-        Set<String> aliasValues = aliasService.getAllAliases().stream()
-                .map(Alias::getValue)
-                .collect(toSet());
-
-        Map<String, Long> commandOccurrences = bashHistoryRepository.getBashHistory().stream()
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        Set<String> aliasValues = getAllAliasesValues();
+        Map<String, Long> historyWithOccurrences = getHistoryWithOccurrences();
 
         Predicate<String> commandIsLongEnough = cmd -> cmd.length() >= MIN_LENGTH_TO_ALIAS;
-        Predicate<String> commandIsUsedFrequently = cmd -> commandOccurrences.get(cmd) >= MIN_OCCURRENCES_TO_ALIAS;
+        Predicate<String> commandIsUsedFrequently = cmd -> historyWithOccurrences.get(cmd) >= MIN_OCCURRENCES_TO_ALIAS;
         Predicate<String> commandIsNotAliased = cmd -> !aliasValues.contains(cmd);
 
-        return bashHistoryRepository.getBashHistory().stream()
+        return historyWithOccurrences.keySet().stream()
                 .distinct()
                 .filter(commandIsLongEnough)
                 .filter(commandIsUsedFrequently)
                 .filter(commandIsNotAliased)
-                .map(cmd -> new AliasSuggestion(cmd, commandOccurrences.get(cmd)))
+                .map(cmd -> new AliasSuggestion(cmd, historyWithOccurrences.get(cmd)))
                 .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    private Set<String> getAllAliasesValues() throws IOException {
+        return aliasService.getAllAliases().stream()
+                .map(Alias::getValue)
+                .collect(toSet());
+    }
+
+    private Map<String, Long> getHistoryWithOccurrences() throws IOException {
+        return bashHistoryRepository.getBashHistory().stream()
+                .map(String::trim)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
     public void implementSuggestion(AliasSuggestion suggestion) throws IOException {
