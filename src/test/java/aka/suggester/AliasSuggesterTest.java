@@ -40,10 +40,8 @@ public class AliasSuggesterTest {
 
     @Test
     public void suggestAliases() throws IOException {
-        final String defaultAliasName = "foo";
-
         final String unAliased = "sudo apt-get update";
-        final String unAliasedNonFrequent = "sudo apt-get install";
+        final String unAliasedNonFrequent = "sudo apt-get install foo";
         final String aliasedFromUserFile = "echo test";
         final String aliasedFromSystem = "cat foo.txt";
 
@@ -58,20 +56,21 @@ public class AliasSuggesterTest {
                 .thenReturn(mockBashHistory);
 
         Mockito.when(aliasUserRepository.getAliases())
-                .thenReturn(Sets.newHashSet(new Alias(defaultAliasName, aliasedFromUserFile)));
+                .thenReturn(Sets.newHashSet(new Alias("does not matter", aliasedFromUserFile)));
 
         Mockito.when(aliasSystemRepository.getAliases())
-                .thenReturn(Sets.newHashSet(new Alias(defaultAliasName, aliasedFromSystem)));
+                .thenReturn(Sets.newHashSet(new Alias("does not matter", aliasedFromSystem)));
 
-        final Set<Alias> suggestions = aliasSuggester.suggestAliases().stream()
+        final Set<String> suggestionsValues = aliasSuggester.suggestAliases().stream()
                 .map(AliasSuggestion::getAlias)
+                .map(Alias::getValue)
                 .collect(Collectors.toSet());
 
-        assertThat(suggestions)
-                .contains(new Alias(defaultAliasName, unAliased))
-                .doesNotContain(new Alias(defaultAliasName, unAliasedNonFrequent))
-                .doesNotContain(new Alias(defaultAliasName, aliasedFromUserFile))
-                .doesNotContain(new Alias(defaultAliasName, aliasedFromSystem));
+        assertThat(suggestionsValues)
+                .contains(unAliased)
+                .doesNotContain(unAliasedNonFrequent)
+                .doesNotContain(aliasedFromUserFile)
+                .doesNotContain(aliasedFromSystem);
     }
 
 }

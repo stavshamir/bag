@@ -45,11 +45,16 @@ public class AliasSuggester {
         Predicate<String> commandIsNotAliased = cmd -> !aliasValues.contains(cmd);
 
         return bashHistoryRepository.getBashHistory().stream()
+                .distinct()
                 .filter(commandIsLongEnough)
                 .filter(commandIsUsedFrequently)
                 .filter(commandIsNotAliased)
-                .map(cmd -> new AliasSuggestion(new Alias("foo", cmd), commandOccurrences.get(cmd)))
+                .map(cmd -> new AliasSuggestion(cmd, commandOccurrences.get(cmd)))
                 .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public void implementSuggestion(AliasSuggestion suggestion) throws IOException {
+        aliasService.addAlias(suggestion.getAlias());
     }
 
 }
