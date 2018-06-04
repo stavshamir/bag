@@ -1,10 +1,10 @@
 package aka.suggester;
 
 import aka.alias.Alias;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AliasSuggestion implements Comparable<AliasSuggestion> {
 
@@ -18,6 +18,10 @@ public class AliasSuggestion implements Comparable<AliasSuggestion> {
 
     public Alias getAlias() {
         return alias;
+    }
+
+    public long getOccurrences() {
+        return occurrences;
     }
 
     @Override
@@ -45,10 +49,31 @@ public class AliasSuggestion implements Comparable<AliasSuggestion> {
     }
 
     private String suggestName(String command) {
-        return Arrays
+        List<String> words = Arrays
                 .stream(command.split(" "))
-                .limit(3)
-                .map(s -> StringUtils.removeStart(s, "-"))
+                .map(String::toLowerCase)
+                .map(s -> s.replaceAll("[^a-z]", ""))
+                .filter(s -> s.length() > 0)
+                .collect(Collectors.toList());
+
+        if (words.size() > 1) {
+          return suggestNameMultipleWords(words);
+        }
+
+        return suggestNameSingleWord(words.get(0));
+    }
+
+    private String suggestNameSingleWord(String command) {
+        return command
+                .toLowerCase()
+                .replaceAll("[^a-z]", "")
+                .substring(0, 2);
+    }
+
+    private String suggestNameMultipleWords(List<String> words) {
+        final int maxNameSize = 3;
+        return words.stream()
+                .limit(maxNameSize)
                 .reduce("", (a, b) -> a + b.substring(0, 1));
     }
 }
