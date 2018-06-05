@@ -15,11 +15,11 @@ public class AliasSystemRepositoryImpl implements AliasSystemRepository {
     @Override
     public Set<Alias> getAliases() throws IOException {
         Process process = new ProcessBuilder("bash", "-i", "src/main/resources/alias.sh").start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-        return reader.lines()
-                .map(Alias::fromString)
-                .collect(toSet());
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            return reader.lines()
+                    .map(Alias::fromString)
+                    .collect(toSet());
+        }
     }
 
 }
