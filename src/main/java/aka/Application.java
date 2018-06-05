@@ -27,8 +27,11 @@ public class Application implements CommandLineRunner{
 
         if (cmd.hasOption(CliOptions.PRINT)) {
             printSuggestions();
-        } else if (cmd.hasOption(CliOptions.APPLY)) {
-            System.out.println(cmd.getOptionValue(CliOptions.APPLY));
+        } else if (cmd.hasOption(CliOptions.CREATE)) {
+            System.out.println(cmd.getOptionValue(CliOptions.CREATE));
+            if (cmd.hasOption(CliOptions.ALTERNATIVE)) {
+                System.out.println(cmd.getOptionValue(CliOptions.ALTERNATIVE));
+            }
         } else if (cmd.hasOption(CliOptions.HELP)) {
             printUsage();
         } else {

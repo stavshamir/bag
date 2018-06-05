@@ -8,8 +8,11 @@ class CliOptions {
 
     static final String PRINT = "p";
 
-    static final String APPLY = "a";
-    private static final String APPLY_LONG = "apply";
+    static final String CREATE = "c";
+    static final String CREATE_LONG = "create";
+
+    static final String ALTERNATIVE = "a";
+    static final String ALTERNATIVE_LONG = "alternative";
 
     static final String HELP = "h";
     private static final String HELP_LONG = "help";
@@ -20,12 +23,20 @@ class CliOptions {
             .desc("print a list of suggested aliases")
             .build();
 
-    private static final Option apply = Option.builder(APPLY)
+    private static final Option create = Option.builder(CREATE)
+            .required(false)
+            .hasArg()
+            .argName("suggested alias name")
+            .longOpt(CREATE_LONG)
+            .desc("create an alias with the suggested name")
+            .build();
+
+    private static final Option alternative = Option.builder(ALTERNATIVE)
             .required(false)
             .hasArg()
             .argName("alias name")
-            .longOpt(APPLY_LONG)
-            .desc("apply the suggested alias")
+            .longOpt(ALTERNATIVE_LONG)
+            .desc("create an alias with an alternative name")
             .build();
 
     private static final Option help = Option.builder(HELP)
@@ -38,7 +49,8 @@ class CliOptions {
     static Options getOptions() {
         return new Options()
                 .addOption(print)
-                .addOption(apply)
+                .addOption(create)
+                .addOption(alternative)
                 .addOption(help);
     }
 
