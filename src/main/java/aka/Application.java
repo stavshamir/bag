@@ -1,7 +1,7 @@
 package aka;
 
 import aka.suggester.AliasSuggester;
-import aka.suggester.AliasSuggestion;
+import org.apache.commons.cli.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,11 +21,33 @@ public class Application implements CommandLineRunner{
     }
 
     @Override
-    public void run(String... args) throws IOException {
-        String template = "%-90s %-15s %s\n";
-        System.out.printf(template, "COMMAND", "TIMES USED", "SUGGESTED ALIAS");
-        aliasSuggester.suggestAliases().stream()
-                .limit(5)
-                .forEach(s -> System.out.printf(template, s.getAlias().getValue(), s.getOccurrences(), s.getAlias().toString()));
+    public void run(String... args) throws IOException, ParseException {
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(CliOptions.getOptions(), args);
+
+        if (cmd.hasOption(CliOptions.PRINT)) {
+            printSuggestions();
+        } else if (cmd.hasOption(CliOptions.APPLY)) {
+            System.out.println(cmd.getOptionValue(CliOptions.APPLY));
+        } else if (cmd.hasOption(CliOptions.HELP)) {
+            printUsage();
+        } else {
+            printUsage();
+        }
+
+
     }
+
+    private void printUsage() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("aka", CliOptions.getOptions());
+    }
+
+    private void printSuggestions() throws IOException {
+        String template = "%-10s %-90s %s\n";
+        System.out.printf(template, "SUGGESTED", "COMMAND", "TIMES USED");
+        aliasSuggester.suggestAliases()
+                .forEach(s -> System.out.printf(template, s.getAlias().getName(), s.getAlias().getValue(), s.getOccurrences()));
+    }
+
 }
