@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ public class AliasSuggester {
         this.bashHistoryRepository = bashHistoryRepository;
     }
 
-    public Set<AliasSuggestion> suggestAliases() throws IOException {
+    public List<AliasSuggestion> suggestAliases() throws IOException {
         Set<String> aliasValues = getAllAliasesValues();
         Map<String, Long> historyWithCount = getHistoryWithCount();
 
@@ -44,8 +44,9 @@ public class AliasSuggester {
                 .filter(commandIsLongEnough)
                 .filter(commandIsUsedFrequently)
                 .filter(commandIsNotAliased)
+                .sorted((c1, c2) -> (int)(historyWithCount.get(c2) - historyWithCount.get(c1)))
                 .map(cmd -> new AliasSuggestion(cmd, historyWithCount.get(cmd)))
-                .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toList());
     }
 
     private Set<String> getAllAliasesValues() throws IOException {
@@ -60,7 +61,7 @@ public class AliasSuggester {
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
-    public void implementSuggestion(AliasSuggestion suggestion) throws IOException {
+    public void applySuggestion(AliasSuggestion suggestion) throws IOException {
         aliasService.addAlias(suggestion.getAlias());
     }
 
