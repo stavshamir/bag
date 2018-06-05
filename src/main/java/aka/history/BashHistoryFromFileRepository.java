@@ -1,19 +1,16 @@
 package aka.history;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-@Repository
 public class BashHistoryFromFileRepository implements BashHistoryRepository {
 
     private final File bashHistoryFile;
 
-    public BashHistoryFromFileRepository(@Value("${bash-history-file}") String bashHistoryFilePath) {
+    public BashHistoryFromFileRepository(String bashHistoryFilePath) {
         this.bashHistoryFile = new File(bashHistoryFilePath);
     }
 

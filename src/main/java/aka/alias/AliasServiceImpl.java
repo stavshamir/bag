@@ -1,20 +1,17 @@
 package aka.alias;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-@Service
 public class AliasServiceImpl implements AliasService {
 
     private final AliasUserRepository aliasUserRepository;
     private final AliasSystemRepository aliasSystemRepository;
 
-    @Autowired
+    private Set<Alias> allAliasesCache;
+
     public AliasServiceImpl(AliasUserRepository aliasUserRepository, AliasSystemRepository aliasSystemRepository) {
         this.aliasUserRepository = aliasUserRepository;
         this.aliasSystemRepository = aliasSystemRepository;
@@ -22,9 +19,13 @@ public class AliasServiceImpl implements AliasService {
 
     @Override
     public Set<Alias> getAllAliases() throws IOException {
-        Set<Alias> aliases = aliasSystemRepository.getAliases();
-        aliases.addAll(aliasUserRepository.getAliases());
-        return aliases;
+        if (allAliasesCache != null) {
+            return allAliasesCache;
+        }
+
+        allAliasesCache = aliasSystemRepository.getAliases();
+        allAliasesCache.addAll(aliasUserRepository.getAliases());
+        return allAliasesCache;
     }
 
     @Override
@@ -33,14 +34,6 @@ public class AliasServiceImpl implements AliasService {
                 .map(Alias::getName)
                 .collect(toSet())
                 .contains(alias.getName());
-    }
-
-    @Override
-    public boolean aliasValueExists(Alias alias) throws IOException {
-        return getAllAliases().stream()
-                .map(Alias::getValue)
-                .collect(toSet())
-                .contains(alias.getValue());
     }
 
     @Override

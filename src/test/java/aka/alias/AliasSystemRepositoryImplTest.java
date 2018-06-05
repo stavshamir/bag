@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasSystemRepositoryImplTest {
 
-    private AliasSystemRepository aliasSystemRepository = new AliasSystemRepositoryImpl();
+    private AliasSystemRepository aliasSystemRepository = new AliasSystemRepositoryImpl("src/main/resources/alias.sh");
 
     @Test
     public void getAliases() throws IOException {

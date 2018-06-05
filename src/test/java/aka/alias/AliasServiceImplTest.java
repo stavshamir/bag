@@ -26,7 +26,7 @@ public class AliasServiceImplTest {
     @BeforeClass
     public static void setUp() {
         AliasUserFileRepository aliasUserRepository = new AliasUserFileRepository(userAliasFilePath);
-        AliasSystemRepositoryImpl aliasSystemRepository = new AliasSystemRepositoryImpl();
+        AliasSystemRepositoryImpl aliasSystemRepository = new AliasSystemRepositoryImpl("src/main/resources/alias.sh");
         aliasService = new AliasServiceImpl(aliasUserRepository, aliasSystemRepository);
     }
 
@@ -64,23 +64,6 @@ public class AliasServiceImplTest {
         assertThat(aliasService.aliasNameExists(notAnAlias))
                 .isFalse();
     }
-
-    @Test
-    public void aliasValueExists() throws IOException {
-        Alias fromUserRepository = new Alias("foo", "echo test");
-        Alias fromSystemRepository = new Alias("foo", "ls --color=auto");
-        Alias notAnAlias = new Alias("foo", "the value is not supposed to matter");
-
-        assertThat(aliasService.aliasValueExists(fromUserRepository))
-                .isTrue();
-
-        assertThat(aliasService.aliasValueExists(fromSystemRepository))
-                .isTrue();
-
-        assertThat(aliasService.aliasValueExists(notAnAlias))
-                .isFalse();
-    }
-
 
     @Test
     public void addAlias_existing_alias() {

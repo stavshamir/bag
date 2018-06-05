@@ -1,24 +1,26 @@
 package aka.alias;
 
-import org.springframework.stereotype.Repository;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toSet;
-
-@Repository
 public class AliasSystemRepositoryImpl implements AliasSystemRepository {
+
+    private final String aliasScriptPath;
+
+    public AliasSystemRepositoryImpl(String aliasScriptPath) {
+        this.aliasScriptPath = aliasScriptPath;
+    }
 
     @Override
     public Set<Alias> getAliases() throws IOException {
-        Process process = new ProcessBuilder("bash", "-i", "src/main/resources/alias.sh").start();
+        Process process = new ProcessBuilder("bash", "-i", aliasScriptPath).start();
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             return reader.lines()
                     .map(Alias::fromString)
-                    .collect(toSet());
+                    .collect(Collectors.toSet());
         }
     }
 

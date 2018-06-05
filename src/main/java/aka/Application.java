@@ -1,32 +1,21 @@
 package aka;
 
+import aka.alias.*;
+import aka.history.BashHistoryFromFileRepository;
+import aka.history.BashHistoryRepository;
 import aka.suggester.AliasSuggester;
 import aka.suggester.AliasSuggestion;
 import org.apache.commons.cli.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import java.io.IOException;
 import java.util.List;
 
 
-@SpringBootApplication
-public class Application implements CommandLineRunner{
+public class Application{
 
-    @Autowired
-    private AliasSuggester aliasSuggester;
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws IOException {
+    public static void main(String[] args) throws IOException {
         CommandLineParser parser = new DefaultParser();
 
-        CommandLine cmd = null;
+        CommandLine cmd;
         try {
             cmd = parser.parse(CliOptions.getOptions(), args);
         } catch (ParseException e) {
@@ -35,10 +24,18 @@ public class Application implements CommandLineRunner{
             return;
         }
 
+        AliasSuggester aliasSuggester;
+        try {
+            aliasSuggester = getAliasSuggester("config/application.properties");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
         if (cmd.hasOption(CliOptions.PRINT)) {
-            printSuggestions();
+            printSuggestions(aliasSuggester);
         } else if (cmd.hasOption(CliOptions.CREATE)) {
-            createAlias(cmd);
+            createAlias(cmd, aliasSuggester);
         } else if (cmd.hasOption(CliOptions.HELP)) {
             printUsage();
         } else {
@@ -47,7 +44,7 @@ public class Application implements CommandLineRunner{
 
     }
 
-    private void createAlias(CommandLine command) throws IOException {
+    private static void createAlias(CommandLine command, AliasSuggester aliasSuggester) {
         int index = Integer.parseInt(command.getOptionValue(CliOptions.CREATE)) - 1;
 
         AliasSuggestion suggestion;
@@ -62,17 +59,22 @@ public class Application implements CommandLineRunner{
             suggestion.setAliasName(command.getOptionValue(CliOptions.ALTERNATIVE));
         }
 
-        aliasSuggester.applySuggestion(suggestion);
+        try {
+            aliasSuggester.applySuggestion(suggestion);
+        } catch (IOException | AliasAlreadyExists e) {
+            System.out.println(e.getMessage());
+            return;
+        }
 
         System.out.println("New alias was created: " + suggestion.getAlias().toString());
     }
 
-    private void printUsage() {
+    private static void printUsage() {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("aka", CliOptions.getOptions());
     }
 
-    private void printSuggestions() throws IOException {
+    private static void printSuggestions(AliasSuggester aliasSuggester) throws IOException {
         System.out.printf("%-14s %-90s %s\n", "SUGGESTED", "COMMAND", "TIMES USED");
 
         List<AliasSuggestion> suggestions = aliasSuggester.suggestAliases();
@@ -80,6 +82,17 @@ public class Application implements CommandLineRunner{
             AliasSuggestion s = suggestions.get(i);
             System.out.printf("(%d) %-10s %-90s %s\n", i + 1, s.getAlias().getName(), s.getAlias().getValue(), s.getCount());
         }
+    }
+
+    private static AliasSuggester getAliasSuggester(final String propertiesFilePath) throws IOException {
+        PropertiesService propertiesService = new PropertiesService(propertiesFilePath);
+
+        AliasUserRepository aliasUserRepository = new AliasUserFileRepository(propertiesService.getAliasUserFilePath());
+        AliasSystemRepository aliasSystemRepository = new AliasSystemRepositoryImpl(propertiesService.getAliasScript());
+        AliasService aliasService = new AliasServiceImpl(aliasUserRepository, aliasSystemRepository);
+        BashHistoryRepository bashHistoryRepository = new BashHistoryFromFileRepository(propertiesService.getBashHistoryFilePath());
+
+        return new AliasSuggester(aliasService, bashHistoryRepository);
     }
 
 }

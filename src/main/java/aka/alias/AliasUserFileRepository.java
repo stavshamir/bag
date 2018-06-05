@@ -1,19 +1,16 @@
 package aka.alias;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-@Repository
 public class AliasUserFileRepository implements AliasUserRepository {
 
     private final File userAliasFile;
 
-    public AliasUserFileRepository(@Value("${alias-user-file}") String userAliasFilePath) {
+    public AliasUserFileRepository(String userAliasFilePath) {
         this.userAliasFile = new File(userAliasFilePath);
     }
 
