@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,15 +39,33 @@ public class AliasSuggesterTest {
     }
 
     @Test
-    public void suggestAliases() throws IOException {
+    public void suggestAliases_contains() throws IOException {
         final String unAliased = "sudo apt-get update";
+        List<String> mockBashHistory = ImmutableList.of(unAliased, unAliased, unAliased);
+
+        Mockito.when(bashHistoryRepository.getBashHistory())
+                .thenReturn(mockBashHistory);
+
+        Mockito.when(aliasUserRepository.getAliases())
+                .thenReturn(new HashSet<>());
+
+        Mockito.when(aliasSystemRepository.getAliases())
+                .thenReturn(new HashSet<>());
+
+        assertThat(getAliasSuggestionsValues())
+                .contains(unAliased);
+    }
+
+    @Test
+    public void suggestAliases_does_not_contain() throws IOException {
         final String unAliasedNonFrequent = "sudo apt-get install foo";
+        final String unAliasedShort = "foo";
         final String aliasedFromUserFile = "echo test";
         final String aliasedFromSystem = "cat foo.txt";
 
         List<String> mockBashHistory = ImmutableList.of(
-                unAliased, unAliased, unAliased,
                 unAliasedNonFrequent,
+                unAliasedShort, unAliasedShort, unAliasedShort,
                 aliasedFromUserFile, aliasedFromUserFile, aliasedFromUserFile,
                 aliasedFromSystem, aliasedFromSystem, aliasedFromSystem
         );
@@ -61,16 +79,51 @@ public class AliasSuggesterTest {
         Mockito.when(aliasSystemRepository.getAliases())
                 .thenReturn(Sets.newHashSet(new Alias("does not matter", aliasedFromSystem)));
 
-        final Set<String> suggestionsValues = aliasSuggester.suggestAliases().stream()
-                .map(AliasSuggestion::getAlias)
-                .map(Alias::getValue)
-                .collect(Collectors.toSet());
-
-        assertThat(suggestionsValues)
-                .contains(unAliased)
+        assertThat(getAliasSuggestionsValues())
                 .doesNotContain(unAliasedNonFrequent)
+                .doesNotContain(unAliasedShort)
                 .doesNotContain(aliasedFromUserFile)
                 .doesNotContain(aliasedFromSystem);
+    }
+
+    @Test
+    public void suggestAliases_is_sorted_by_count() throws IOException {
+        final String first = "first";
+        final String second = "second";
+        final String third = "third";
+
+        List<String> mockBashHistory = ImmutableList.of(
+                third, third, third,
+                first, first, first, first, first,
+                second, second, second, second
+        );
+
+        Mockito.when(bashHistoryRepository.getBashHistory())
+                .thenReturn(mockBashHistory);
+
+        Mockito.when(aliasUserRepository.getAliases())
+                .thenReturn(new HashSet<>());
+
+        Mockito.when(aliasSystemRepository.getAliases())
+                .thenReturn(new HashSet<>());
+
+        final List<String> aliasSuggestionsValues = getAliasSuggestionsValues();
+
+        assertThat(aliasSuggestionsValues)
+                .element(0).isEqualTo(first);
+
+        assertThat(aliasSuggestionsValues)
+                .element(1).isEqualTo(second);
+
+        assertThat(aliasSuggestionsValues)
+                .element(2).isEqualTo(third);
+    }
+
+    private List<String> getAliasSuggestionsValues() throws IOException {
+        return aliasSuggester.suggestAliases().stream()
+                .map(AliasSuggestion::getAlias)
+                .map(Alias::getValue)
+                .collect(Collectors.toList());
     }
 
 }
