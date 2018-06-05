@@ -27,4 +27,9 @@ public class PropertiesServiceTest {
                 .isEqualTo("/home/stav/aka_alias");
     }
 
+    @Test
+    public void getAliasScript() {
+        assertThat(propertiesService.getAliasScript())
+                .isEqualTo("/home/stav/aka/alias.sh");
+    }
 }
