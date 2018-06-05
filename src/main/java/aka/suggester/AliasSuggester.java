@@ -33,18 +33,18 @@ public class AliasSuggester {
 
     public Set<AliasSuggestion> suggestAliases() throws IOException {
         Set<String> aliasValues = getAllAliasesValues();
-        Map<String, Long> historyWithOccurrences = getHistoryWithOccurrences();
+        Map<String, Long> historyWithCount = getHistoryWithCount();
 
         Predicate<String> commandIsLongEnough = cmd -> cmd.length() >= MIN_LENGTH_TO_ALIAS;
-        Predicate<String> commandIsUsedFrequently = cmd -> historyWithOccurrences.get(cmd) >= MIN_OCCURRENCES_TO_ALIAS;
+        Predicate<String> commandIsUsedFrequently = cmd -> historyWithCount.get(cmd) >= MIN_OCCURRENCES_TO_ALIAS;
         Predicate<String> commandIsNotAliased = cmd -> !aliasValues.contains(cmd);
 
-        return historyWithOccurrences.keySet().stream()
+        return historyWithCount.keySet().stream()
                 .distinct()
                 .filter(commandIsLongEnough)
                 .filter(commandIsUsedFrequently)
                 .filter(commandIsNotAliased)
-                .map(cmd -> new AliasSuggestion(cmd, historyWithOccurrences.get(cmd)))
+                .map(cmd -> new AliasSuggestion(cmd, historyWithCount.get(cmd)))
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
@@ -54,7 +54,7 @@ public class AliasSuggester {
                 .collect(toSet());
     }
 
-    private Map<String, Long> getHistoryWithOccurrences() throws IOException {
+    private Map<String, Long> getHistoryWithCount() throws IOException {
         return bashHistoryRepository.getBashHistory().stream()
                 .map(String::trim)
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
