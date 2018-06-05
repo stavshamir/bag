@@ -3,49 +3,28 @@ package aka.suggester;
 import aka.alias.Alias;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class AliasSuggestion implements Comparable<AliasSuggestion> {
+public class AliasSuggestion {
 
     private final Alias alias;
-    private final long occurrences;
+    private final long count;
 
-    public AliasSuggestion(String command, long occurrences) {
+    public AliasSuggestion(String command, long count) {
         this.alias = new Alias(suggestName(command), command);
-        this.occurrences = occurrences;
+        this.count = count;
+    }
+
+    public void setAliasName(String aliasName) {
+        alias.setName(aliasName);
     }
 
     public Alias getAlias() {
         return alias;
     }
 
-    public long getOccurrences() {
-        return occurrences;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AliasSuggestion that = (AliasSuggestion) o;
-        return Objects.equals(alias, that.alias);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(alias);
-    }
-
-    @Override
-    public String toString() {
-        return "'" + alias.getValue() + "' was used " + occurrences + " times: suggesting alias " + alias.getName();
-    }
-
-    @Override
-    public int compareTo(AliasSuggestion other) {
-        return (int) (other.occurrences - this.occurrences);
+    public long getCount() {
+        return count;
     }
 
     private String suggestName(String command) {

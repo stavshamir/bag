@@ -30,15 +30,4 @@ public class AliasSuggestionTest {
 
     }
 
-    @Test
-    public void compareTo() {
-        final AliasSuggestion foo = new AliasSuggestion("foo", 2);
-        final AliasSuggestion bar = new AliasSuggestion("bar", 0);
-
-        assertThat(foo.compareTo(bar))
-                .isLessThan(0);
-
-        assertThat(bar.compareTo(foo))
-                .isGreaterThan(0);
-    }
 }
