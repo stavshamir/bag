@@ -8,6 +8,9 @@ class CliOptions {
 
     static final String PRINT = "p";
 
+    static final String PRINT_ALL = "l";
+    static final String PRINT_ALL_LONG = "print-all";
+
     static final String CREATE = "c";
     static final String CREATE_LONG = "create";
 
@@ -23,10 +26,17 @@ class CliOptions {
             .desc("print a list of suggested aliases")
             .build();
 
+    private static final Option printAll = Option.builder(PRINT_ALL)
+            .required(false)
+            .hasArg(false)
+            .longOpt(PRINT_ALL_LONG)
+            .desc("print a list of all suggested aliases")
+            .build();
+
     private static final Option create = Option.builder(CREATE)
             .required(false)
             .hasArg()
-            .argName("suggested alias name")
+            .argName("index")
             .longOpt(CREATE_LONG)
             .desc("create an alias with the suggested name")
             .build();
@@ -49,6 +59,7 @@ class CliOptions {
     static Options getOptions() {
         return new Options()
                 .addOption(print)
+                .addOption(printAll)
                 .addOption(create)
                 .addOption(alternative)
                 .addOption(help);

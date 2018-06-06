@@ -26,14 +26,16 @@ public class Application{
 
         AliasSuggester aliasSuggester;
         try {
-            aliasSuggester = getAliasSuggester("config/application.properties");
+            aliasSuggester = getAliasSuggester(System.getenv("AKA_HOME") + "/config/application.properties");
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return;
         }
 
         if (cmd.hasOption(CliOptions.PRINT)) {
-            printSuggestions(aliasSuggester);
+            printSuggestions(aliasSuggester, 5);
+        } else if (cmd.hasOption(CliOptions.PRINT_ALL)) {
+            printSuggestions(aliasSuggester, 100);
         } else if (cmd.hasOption(CliOptions.CREATE)) {
             createAlias(cmd, aliasSuggester);
         } else if (cmd.hasOption(CliOptions.HELP)) {
@@ -45,13 +47,22 @@ public class Application{
     }
 
     private static void createAlias(CommandLine command, AliasSuggester aliasSuggester) {
-        int index = Integer.parseInt(command.getOptionValue(CliOptions.CREATE)) - 1;
+        int index;
+        try {
+            index = Integer.parseInt(command.getOptionValue(CliOptions.CREATE)) - 1;
+        } catch (NumberFormatException e) {
+            System.out.println("Error: failed to parse integer value for -c");
+            return;
+        }
 
         AliasSuggestion suggestion;
         try {
             suggestion = aliasSuggester.suggestAliases().get(index);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return;
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Error: invalid index - please choose an index within the suggestions bounds");
             return;
         }
 
@@ -71,16 +82,19 @@ public class Application{
 
     private static void printUsage() {
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("aka", CliOptions.getOptions());
+        formatter.printHelp("aka [-c <index> [-a <alternative alias name>]]", CliOptions.getOptions());
+        System.out.println("aka version 1.0 by Stav Shamir");
     }
 
-    private static void printSuggestions(AliasSuggester aliasSuggester) throws IOException {
+    private static void printSuggestions(AliasSuggester aliasSuggester, int limit) throws IOException {
         System.out.printf("%-14s %-90s %s\n", "SUGGESTED", "COMMAND", "TIMES USED");
 
-        List<AliasSuggestion> suggestions = aliasSuggester.suggestAliases();
-        for (int i = 0; i < 5; i++) {
-            AliasSuggestion s = suggestions.get(i);
-            System.out.printf("(%d) %-10s %-90s %s\n", i + 1, s.getAlias().getName(), s.getAlias().getValue(), s.getCount());
+        int i = 0;
+        for (AliasSuggestion s : aliasSuggester.suggestAliases()) {
+            if (limit-- == 0) {
+                break;
+            }
+            System.out.printf("(%d) %-10s %-90s %s\n", ++i, s.getAlias().getName(), s.getAlias().getValue(), s.getCount());
         }
     }
 
