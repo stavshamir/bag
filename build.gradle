@@ -12,10 +12,14 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-bootJar {
-    baseName = 'com.stavshamir.aka'
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.stavshamir.bag.Application'
+    }
+    baseName = 'com.stavshamir.bag'
     version = '1.0-SNAPSHOT'
 }
+
 
 repositories {
     mavenCentral()
