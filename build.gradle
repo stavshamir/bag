@@ -9,17 +9,15 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
-jar {
+task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.stavshamir.bag.Application'
     }
-    baseName = 'com.stavshamir.bag'
-    version = '1.0-SNAPSHOT'
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
-
 
 repositories {
     mavenCentral()
@@ -33,6 +31,6 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'junit:junit'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.8.4'
+    testCompile("org.assertj:assertj-core:3.10.0")
 }
