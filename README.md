@@ -31,6 +31,8 @@ bag [-c <index> [-a <alternative alias name>]]
  -l,--print-all                  print a list of all suggested aliases
  -p                              print a list of suggested aliases
  ```
+*The new aliases become available after restarting the shell.*
+
 
 ## Examples:
 1. Printing a list of suggested aliases
