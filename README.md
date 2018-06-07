@@ -1,6 +1,6 @@
 # bag - Bash Alias Generator
 
-This tool suggests aliases based on non-aliased frequently used commnads, and provides a painless way to apply them.
+This tool suggests aliases based on non-aliased frequently used commands, and provides a painless way to apply them.
 
 
 ## Build
@@ -15,9 +15,9 @@ $ ./gradlew fatJar
 $ source install.sh
 ```
 
-## -OR- Download *link* and install:
+## -OR- Download from [here][zip] and install:
 1. Unzip
-2. From the unzip directory, run:
+2. From the unzipped directory, run:
 ```bash
 $ source install.sh
 ```
@@ -52,3 +52,5 @@ New alias was created: alias fab='foo -a -b -c'
 $ bag -c 2 -a bam
 New alias was created: alias bam='bar -d -e -f'
 ```
+
+[zip]: https://github.com/stavshamir/stavshamir.github.io/blob/master/deployed/bag.zip?raw=true
