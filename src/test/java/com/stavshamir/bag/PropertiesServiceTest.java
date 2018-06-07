@@ -24,12 +24,12 @@ public class PropertiesServiceTest {
     @Test
     public void getAliasUserFilePath() {
         assertThat(propertiesService.getAliasUserFilePath())
-                .isEqualTo("/home/stav/aka_alias");
+                .isEqualTo("/home/stav/IdeaProjects/bag/src/test/resources/aliases");
     }
 
     @Test
     public void getAliasScript() {
         assertThat(propertiesService.getAliasScript())
-                .isEqualTo("/home/stav/aka/alias.sh");
+                .isEqualTo("/home/stav/IdeaProjects/bag/src/test/resources/alias.sh");
     }
 }
