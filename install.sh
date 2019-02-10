@@ -23,6 +23,6 @@ echo 'adding lines to .bashrc'
 grep -qF '# bag - bash alias' ~/.bashrc || echo '# bag - bash alias generator' >> ~/.bashrc
 grep -qF 'export BAG_HOME'    ~/.bashrc || echo export BAG_HOME=${BAG_HOME}    >> ~/.bashrc
 grep -qF 'source '${BAG_HOME} ~/.bashrc || echo source ${BAG_HOME}/aliases     >> ~/.bashrc
-grep -qF 'alias bag='         ~/.bashrc || echo alias bag='java -jar $BAG_HOME/bag-1.0-SNAPSHOT.jar' >> ~/.bashrc
+grep -qF 'alias bag='         ~/.bashrc || echo alias bag=\'java -jar $BAG_HOME/bag-1.0-SNAPSHOT.jar\' >> ~/.bashrc
 
 echo 'done'
